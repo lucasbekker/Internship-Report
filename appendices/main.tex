@@ -1,0 +1,142 @@
+\chapter*{Appendix A}
+
+\section*{CUDA installation}
+
+\hspace{4mm}The following information is to be considered complementary to the documentation that NVIDIA provides. Users who don't have a whole lot of experience with the CUDA toolkit, or are otherwise unfamiliar with the installation process, might find useful information.\vspace{5mm}
+
+Regarding the linux section, users on distributions other than Ubuntu, might be of the opinion that the following text is biased towards Ubuntu. The recommendations that follow are based on my personal experience, and as such may very well be biased.
+
+\subsection*{Linux}
+
+\hspace{4mm}Installing CUDA on linux can be cumbersome, if you don't stick to the officially supported distributions. These vary according to the CUDA toolkit version you wish to install. A list of supported linux distributions for CUDA 9.1 can be found at the system requirements section of the CUDA installation guide\autocite[]{cuda_install_linux}. The following is a list of linux distributions that NVIDIA supports on AMD64 capable hardware:
+
+\begin{itemize}
+    \item CUDA 9.2 supports Fedora 27, OpenSUSE 42.3, SLES 12 SP3, RHEL/CentOS 7 and 6, Ubuntu 16.04 LTS and 17.10.
+    \item CUDA 8.0 supports Fedora 23, OpenSUSE 13.2, SLES 12 and 11 SP4, RHEL/CentOS 7 and 6, Ubuntu 16.04 LTS and 14.04 LTS.
+    \item CUDA 7.5 supports Fedora 21, OpenSUSE 13.2, SLES 12 and 11 SP3, RHEL/CentOS 7 and 6, Ubuntu 15.04 and 14.04 LTS.
+    \item CUDA 6.0 supports Fedora 19, OpenSUSE 13.2, SLES 11 SP3 and SP2, RHEL/CentOS 6 and 5, Ubuntu 13.04 and 12.04 LTS.
+\end{itemize}
+
+Another possibility is to use a prepackaged version of CUDA, generally provided by the linux distribution itself. Debian 8 (jessie) is a good example of a linux distribution that is not officially supported by NVIDIA, but does provide a prepackaged CUDA toolkit in the backports repository.\vspace{5mm}
+
+Even if a prepackaged CUDA toolkit is available for your distribution, it might be better to use a version provided by NVIDIA. Ubuntu 16.04 LTS is an officially supported distribution for a number of CUDA toolkit versions, but also provides a prepackaged version of CUDA 7.5. It might be tempting to just install the prepackaged version (\texttt{`sudo apt install nvidia-cuda-toolkit`}), but the way in which certain libraries are provided deviates from the official NVIDIA way, which may cause problems later on.
+
+\newpage
+
+\subsection*{Windows}
+
+\hspace{4mm}Installing CUDA on Windows is relatively trouble free. Just download the version you wish to install from NVIDIA and follow the instructions of the installer.\vspace{5mm}
+
+The installer also includes a version of the NVIDIA driver, but it might be outdated. I would recommend to install the latest driver that NVIDIA provides for your GPU.
+
+\subsection*{Docker}
+
+\hspace{4mm}NVIDIA Docker is a relatively new development that aims to facilitate running CUDA applications and development in a containerized world. It can also be used to setup a CUDA development environment with relative ease. (only supported on linux)\vspace{5mm}
+
+GPGPU acceleration in a containerized environment has the inherent problem that containerized environments are by design hardware agnostic, limiting access to the GPU. NVIDIA provides software for Docker that circumvents this problem, called \texttt{`nvidia-docker2`}. The host operating system requires a supported NVIDIA graphics driver, Docker and the aforementioned \texttt{`nvidia-docker2`}, The CUDA toolkit and other user space software runs inside the container. A list of prerequisites and a quick installation guide are available at the wiki of the projects github page\autocite[]{nvidia_docker_git}.\vspace{5mm}
+
+One of the prerequisites is a CUDA capable device of an architecture newer than Fermi, meaning: Kepler, Maxwell, Pascal and Volta (at the time of writing). Even though CUDA 8.0 and earlier development environments are available using NVIDIA Docker, targeting Fermi and Tesla will not be possible using NVIDIA Docker.\vspace{5mm}
+
+\noindent NVIDIA docker Installation instructions:\vspace{5mm}
+
+\noindent \texttt{\# Install docker (provided by Canonical) and curl}\\
+\texttt{sudo apt install docker.io curl}\vspace{4mm}
+
+\noindent \texttt{\# Add the NVIDIA docker repository to the system}\\
+\texttt{curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -}\\
+\texttt{distribution=\$(. /etc/os-release;echo \$ID\$VERSION\_ID)}\\
+\texttt{curl -s -L https://nvidia.github.io/nvidia-docker/\$distribution/nvidia-docker.list}\\
+\texttt{| sudo tee /etc/apt/sources.list.d/nvidia-docker.list}\\
+\texttt{sudo apt update}\vspace{4mm}
+
+\noindent \texttt{\# Install nvidia-docker2 and reload the Docker daemon configuration}\\
+\texttt{sudo apt install nvidia-docker2}\\
+\texttt{sudo pkill -SIGHUP dockerd}\\
+
+\noindent \texttt{\# Add the user to the docker group (logoff and login to take effect)}\\
+\texttt{sudo usermod -aG docker "username"}\vspace{4mm}
+
+\noindent \texttt{\# Test NVIDIA docker with nvidia-smi}\\
+\texttt{docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi}
+
+\newpage
+
+\subsubsection*{Example}
+
+\hspace{4mm}As an example, the following command will open an interactive shell in a CUDA 8.0 development environment Docker container:\vspace{5mm}
+
+\noindent \texttt{docker run -it --runtime=nvidia --rm nvidia/cuda:8.0-devel /bin/bash}\vspace{5mm}
+
+\noindent Running \texttt{`nvcc -V`} and \texttt{`gcc --version`} in this bash prompt results in:\vspace{5mm}
+
+\noindent \texttt{nvcc: NVIDIA (R) Cuda compiler driver}\\
+\texttt{Copyright (c) 2005-2016 NVIDIA Corporation}\\
+\texttt{Built on Tue\_Jan\_10\_13:22:03\_CST\_2017}\\
+\texttt{Cuda compilation tools, release 8.0, V8.0.61}\vspace{4mm}
+
+\noindent \texttt{gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609}\\
+\texttt{Copyright (C) 2015 Free Software Foundation, Inc.}\\
+\texttt{This is free software; see the source for copying conditions.  There is NO}\\
+\texttt{warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.}\vspace{5mm}
+
+\noindent As can be seen from these results, NVIDIA made the decision to base their Docker container on Ubuntu 16.04 LTS.
+
+\newpage
+
+\section*{Toolchain}
+
+\hspace{4mm}A reliable and well documented toolchain is paramount to software development. Achieving this doesn't have to be difficult, but it does limit the options somewhat.
+
+\subsection*{Compiler}
+
+\hspace{4mm}An important aspect of the prerequisites of the CUDA toolkit is the supported c/c++ compiler. This also varies from version to version of CUDA and can be found in the same table that also provides the officially supported linux distributions.
+
+\subsubsection*{Linux}
+
+\hspace{4mm}Choosing the right linux distribution is an important step, because it determines the (system default) compiler, libraries and available support.\vspace{5mm}
+
+\noindent GCC support of CUDA:
+
+\begin{itemize}
+    \item CUDA 9.2 supports gcc up-to 7.x
+    \item CUDA 8.0 supports gcc up-to 5.x
+    \item CUDA 7.5 supports gcc up-to 4.x
+    \item CUDA 6.0 supports gcc up-to 4.7
+\end{itemize}
+
+You could install (or compile) a different version of gcc on your distribution, but you would also need to install or recompile various libraries to ensure ABI compatibility.\vspace{5mm}
+
+\noindent \texttt{sudo apt install gcc-4.9 g++-4.9}\vspace{4mm}
+    
+\noindent \texttt{sudo ln -s /usr/bin/gcc-4.9 /usr/local/cuda/bin/gcc}\\
+\texttt{sudo ln -s /usr/bin/g++-4.9 /usr/local/cuda/bin/g++}\vspace{5mm}
+
+The above commands install gcc 4.9 on Ubuntu 16.04 LTS and links that to the installed CUDA toolkit. This (and similar) solutions have been reported to work correctly, but your results may vary.
+
+\subsubsection*{Ubuntu and derivatives}
+
+\hspace{4mm}Ubuntu 16.04 LTS is a good choice for linux development in general and CUDA development as well. The system default compiler is gcc 5.4, which is officially supported by the CUDA toolkit versions 8.0 and 9.x (possibly later versions too). The availability of the Hardware Enablement (HWE) stack provides the choice between a rock solid linux 4.4 LTS kernel and a more recent kernel for those who need or want it.\vspace{5mm}
+
+Ubuntu 16.04 LTS is an officially supported linux distribution for the versions 8.x and 9.x. NVIDIA does not officially support Ubuntu 16.04 for CUDA 7.5, but as mentioned earlier, a prepackaged version of CUDA 7.5 is available in the official Ubuntu repositories.\vspace{5mm}
+
+An other advantage of the 16.04 LTS release is that it is supported until sometime in 2021, and even longer support is available for paying customers. Not having to reevaluate the toolchain and development environment every year is a big plus.
+
+\newpage
+
+Derivatives of Ubuntu LTS releases, like for example Kubuntu 16.04, are similar enough to cause minimal difficulties. The only real exception to this are window managers (kwin, mutter, compton) and their interaction with NVIDIA proprietary drivers. Certain third party software is known to produce more segmentation faults if the graphics stack is not completely standard, and a different window manager can cause problems.
+
+\subsubsection*{Windows}
+
+\hspace{4mm}The situation on Windows is similar, as the latest (point) release of the Visual C++ compiler is not always compatible. Every CUDA release that officially supports Windows 10, also supports the Visual C++14.0 (Visual Studio 2015) compiler, making it a good candidate.
+
+\subsection*{CUDA toolkit version}
+
+\hspace{4mm}If your project doesn't require the latest and greatest features of the CUDA toolkit, it might be advantageous to stick to an earlier version of CUDA, for compatibility sake. Version 8.0 has hardware support for the Fermi, Kepler, Maxwell and Pascal architectures (newer versions removed Fermi support in favor of Volta and older versions lack Pascal support).
+
+\subsubsection*{NVIDIA graphics driver on linux}
+
+\hspace{4mm}Installing the proprietary NVIDIA graphics driver on linux can be a hassle, requiring kernel header files, dkms and compiler. A further complication is that certain installation methods require the manual blacklisting of the open source and unofficial NVIDIA driver (nouveau). Various linux distributions have made a lot of progress over the last couple of years in aiding the user in the installation of the NVIDIA graphics driver, but the installation of the CUDA toolkit also installs the driver that NVIDIA recommends (this behavior can be altered).\vspace{5mm}
+
+My personal recommendation would be to stick to the defaults that NVIDIA provide. The installation instructions included in the CUDA toolkit documentation are easy to follow and tell the user how to prepare the system for the CUDA toolkit as well as the included graphics driver.\vspace{5mm}
+
+A last note on the graphics driver is that the CUDA toolkit requires a minimum version, which depends on the version of the toolkit. The by NVIDIA included driver will always meet that requirement, but if you decide to manually force a different version of the graphics driver, you will have to take this into account.

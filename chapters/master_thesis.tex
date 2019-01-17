@@ -1,0 +1,44 @@
+\chapter{Master thesis}
+
+\hspace{4mm} The master thesis project will set out to investigate the performance of a selection of algorithms and workloads, implemented on the GPU, that are common to the MEFD group. This investigation will contain an experimental part, but will focus as much as possible on the theoretical aspects that dictate the behaviour. These theoretical aspects range from elements that can be traced back to the algorithm in question, like non-parallelizable parts of the workload or communications bottlenecks, but also to aspects that are directly related to the hardware on which the workload is executed, such as the various forms of latency and memory bandwidth.\\
+
+\section{Topics}
+
+\begin{itemize}
+    \item Describe the workings of a GPU and discuss the important differences between a CPU and a GPU.
+    \item Define a selection of test cases taken from common tasks encountered by the MEFD group and explain their relevance.
+    \item Discuss the workings of the algorithms of the test cases with a focus on parallelizability, compute and memory operations.
+    \item Run the test cases on the CPU and evaluate the results.
+    \item Run the test cases on the GPU and evaluate the results.
+\end{itemize}
+
+\hspace{3mm}
+
+The internship has provided a lot of background information on the workings of computers, but has focused on the CPU and its related components/subsystems. The GPU, essential to GPGPU, has not been treated in detail. The CPU was discussed first for a number of reasons, but the most important one is that it is easier to understand the workings of a GPU when you understand the workings of a CPU. The first order of business for the master thesis project is to discuss the workings of a GPU and how it is different from a CPU in relationship to HPC workloads.\\
+
+The second topic of the master thesis project is to make a selection of algorithms and workloads to investigate the performance of. They must be general enough to be broadly applicable, but also need to be specific to the problems encountered by the MEFD group. It is also important to make the selection such that the amount of overlap between the workloads is minimal.
+
+\newpage
+
+Once the test cases have been chosen, their workings need to be examined for aspects like parallelizability, compute and memory operations. These aspects form the basis for their respective performance projections.\\
+
+The absolute performance of a GPU based implementation of an algorithm is not really meaningful without something to compare it to. The CPU based implementations will function as a baseline for the results of the GPU based implementations.
+
+\section{Challenges}
+
+\begin{itemize}
+    \item Find the correct test cases.
+    \item Find or make software implementations of the test cases that provide a fair representation of the performance on the CPU and GPU.
+    \item Model the (parallel) scaling results in the framework of the modified Amdahl's law.
+    \item Map the double precision requirements of the test cases.
+\end{itemize}
+
+\hspace{3mm}
+
+The usability of the results of the master thesis project hinges on the quality of the test cases. The challenge is to understand the problems of the stakeholders and translate them to test cases that mimic their problems, but also reduce them to their bare essentials.\\
+
+The second challenge related to the test cases is the quality of their implementations. Comparing an unoptimized version of a CPU implementation to an unoptimized version of a GPU implementation will only provide garbage results. Both the GPU and CPU versions of the test cases need to attain a certain threshold of quality in order for them to be useful. This does not mean that they need to be heavily optimized, but they do need to approach the levels of performance of production code.\\
+
+The compensated Amdahl's law forms a nice framework for modelling the parallel scalability results of the test cases. The challenge will be to relate the fitted parameters of the compensated Amdahl's law to the workings of the algorithm in question. If it is found that a test case has a communications bottleneck, how can that be traced back to the algorithm?\\
+
+One of the appeals of GPGPU is that it leverages the computational horsepower of hardware that was designed for graphics related workloads of the computer. This hardware can be found in almost every computer and is generally very cheap, but does have some limitations compared to dedicated professional GPGPU components. The most significant drawback, pertaining to the workloads of the MEFD group, of consumer hardware is the lackluster double precision performance. It would be useful to investigate the relevance of reduced double precision performance in order to predict the results of the test cases on consumer level hardware.

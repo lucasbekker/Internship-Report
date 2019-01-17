@@ -1,0 +1,48 @@
+\chapter{CPU interfaces}
+
+\hspace{4mm}As stated earlier, modern CPU's are more akin to SoC's than traditional processors. One of the most significant advancements has been the integration of interfaces onto the CPU package. This allows for higher bandwidth and lower latencies because fewer signals have to pass over PCB traces of the motherboard.
+
+\section{Memory controller}
+
+\hspace{4mm}The memory controller is the connecting element between the CPU cores and the DRAM memory. Many scientific computing workloads have data sets that don't fit in the cache of the CPU, forcing extensive usage of DRAM memory. These kinds of workloads usually benefit heavily from high bandwidth and low latency main memory, making the memory controller crucial for performance. Modern memory controllers are very complex pieces of engineering and explaining their operation is well beyond the scope of this text, which will focus on their features instead.\vspace{5mm}
+
+One of the most distinguishing aspects of a memory controller is the amount of memory channels it supports\autocite[]{wiki_memch}. A memory channel is a 64-bit wide interface to a cluster of DRAM chips, usually located on a DIMM\autocite[]{wiki_dimm}. The peak bandwidth can be increased by allowing parallel access to multiple memory channels, making dual channel memory twice as fast as single channel memory, while latency remains unaffected. Typical consumer PC and laptop CPU's have an integrated memory controller capable of dual channel, whereas the Intel Skylake-SP chips contain two memory controller, each supporting triple channel for an effective 6 channel memory system.\vspace{5mm}
+
+A second important aspect of a memory controller/system is support for Error Correcting Code, which is a technique to detect and correct certain memory errors\autocite[]{wiki_ecc}. The information stored in a memory cell can get corrupted by a faulty power supply or interaction with solar radiation, resulting in a "bit flip". ECC capable memory stores additional bits of parity data to detect and (when possible) repair these corruptions. Bit flips are not very common and most consumer applications don't suffer terribly when they encounter one (system may crash), but bit flips in sensitive, long running and expensive simulations are much more problematic. That is why ECC is almost always employed in servers, despite its drawbacks (higher cost and latency).
+
+\section{PCI-express}
+
+\hspace{4mm}PCI-express is the dominant interconnecting interface for computer components\autocite[]{wiki_pcie}. Basically everything other then DRAM is connected to the CPU via (a derived form of) PCIe, making it a very important element of a computer. Some examples of components that are connected to the CPU via PCIe are:
+
+\begin{itemize}
+    \item GPU
+    \item NIC
+    \item SAS controller
+    \item NVMe storage
+\end{itemize}
+
+PCIe is a serial bus, introduced to replace PCI(-X)\autocite[]{wiki_pci} and AGP\autocite[]{wiki_agp}. The PCIe standard has seen multiple revisions (backwards compatible) over the years since its introduction, improving (among other things); bandwidth, power delivery, error correcting overhead and features. The most common implementation of the standard (at the time of writing) is version 3.x, which will be the version that this text considers.\vspace{5mm}
+
+PCIe links consist of "lanes", each lane having four physical connections. Two connections for a differential read signal and the other two for a differential write signal, amounting to a full-duplex connection. A PCIe link to a device may be a grouping of multiple lanes, ranging from one to 32 lanes per link (x1, x2, x4, x8, x16, x32). GPU's are commonly connected using a x16 link, SAS controllers and NVMe storage typically use a x4/x8 link and single port NIC's have a x1 link.\vspace{5mm} 
+
+The bandwidth of a PCIe v3 x1 link is specified using Giga Transfers per second (GT/s), which specifies the amount of bits that can be transferred from the host to the client or vice versa. The PCIe v3 standard uses 128b/130b encoding for error correcting purposes, meaning that for every 130 bits transmitted, only 128 bits contain data and the remaining two bits contain a form of parity data. This means that a PCIe v3 x1 link of 8 GT/s has a bandwidth of 985 MB/s (8000 x (128/130) x (1/8) = 984.62) and a x16 link has a bandwidth of 15.75 GB/s.
+
+\subsection*{DMI}
+
+\hspace{4mm}The Direct Media Interface interconnect is an Intel specific protocol used to connect the CPU to the Platform Controller Hub\autocite[]{wiki_pch}, which is (among other things) responsible for USB and SATA connectivity. DMI is a prime example of an interconnect specification derived from PCIe, with a DMI 3.0 link being nearly equivalent to PCIe v3 x4 link.
+
+\newpage
+
+\subsection*{QPI and UPI}
+
+\hspace{4mm}Most high-end servers allow the placement of multiple identical CPU's on the same motherboard, allowing two or four CPU's to be part of the same computer. Intel QuickPath Interconnect\autocite[]{wiki_qpi} and its successor, Intel UltraPath Interconnect\autocite[]{wiki_upi}, are interfaces primarily used for inter CPU communication on these multi socket machines\vspace{5mm}.
+
+\noindent The bandwidth of the connection between the CPU's can be important in a number of scenarios, for example:
+
+\begin{itemize}
+    \item Memory bandwidth starved single threaded applications.
+    \item Threads running on CPU-0 that need to communicate with a GPU connected to CPU-1.
+    \item Results from threads running on CPU-0 and CPU-1 that need to be combined in a single thread.
+\end{itemize}
+
+The total bandwidth of a QPI/UPI connection is its transfer speed specification times four. The Intel Xeon Gold 6132 has a UPI link speed of 10.6 GT/s, amounting to 42.4 GB/s of bandwidth. Note that this is considerably less then the maximum memory bandwidth of the Xeon Gold 6132, which is 119.21 GiB/s.

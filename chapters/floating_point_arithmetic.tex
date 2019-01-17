@@ -1,0 +1,23 @@
+\chapter{Floating point arithmetic}
+
+\section{Fused Multiply Add}
+
+\hspace{4mm}The prolific nature of the dot product in vector mathematics has lead to the development of hardware dedicated to the task, performing a multiplication and addition in a single step:
+
+\begin{equation} \label{FMA eq.}
+    \text{A} = \text{A} + \text{B} \times \text{C}
+\end{equation}
+
+\noindent It should be noted that the FMA operation can be used to emulate (may take more then a single instruction) the basic operations:
+
+\begin{itemize}
+    \item Addition
+    \item Subtraction
+    \item Multiplication
+    \item Division
+    \item Raising to a power
+\end{itemize}
+
+As such, most modern computers rely on FMA hardware for all their floating point calculations. The low level hardware required to perform the FMA calculation, differs for every floating point format (double, single or half). This makes it a common practice to provide separate hardware blocks for each floating point format.
+
+\newpage

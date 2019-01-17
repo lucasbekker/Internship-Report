@@ -1,0 +1,70 @@
+% TU/e Style Master Thesis template for LaTeX.
+
+\documentclass[a4paper,10pt,twoside]{report}
+
+% Packages are defined at the thesis.sty file.
+\usepackage{thesis}
+
+% Define key:value pairs.
+\newcommand{\shortdoctitle}{Internship report}
+\newcommand{\doctitle}{GPGPU acceleration}
+\newcommand{\docsubtitle}{Internship report}
+\newcommand{\me}{Lucas Bekker}
+\newcommand{\keywords}{GPGPU}
+\newcommand{\version}{v1.0}
+\newcommand{\monthYear}{August 2018}
+\newcommand{\firstCommitteeMember}{prof.dr.ir. E. Harald van Brummelen}
+\newcommand{\secondCommitteeMember}{}
+\newcommand{\thirdCommitteeMember}{}
+
+\author{\me}
+
+% PDF settings.
+\hypersetup
+{
+    pdfauthor={\me},
+    pdftitle={\shortdoctitle},
+    pdfsubject={\doctitle},
+    pdfkeywords={\keywords}
+}
+
+\begin{document}
+
+% Titlepage
+\pagenumbering{gobble}
+\include{titlepage}
+\cleardoublepage
+\pagenumbering{roman}
+\normalsize
+
+% TOC, list of figures and list of tables.
+\cleardoublepage
+\tableofcontents
+\input{chapters/acronym}
+\cleardoublepage
+
+% Page settings
+\setcounter{page}{0}
+\pagenumbering{arabic}
+
+% Chapters
+\input{chapters/introduction.tex}
+\input{chapters/floating_point_data.tex}
+\input{chapters/floating_point_arithmetic.tex}
+\input{chapters/theoretical_parallel_speedup.tex}
+\input{chapters/computer_models.tex}
+\input{chapters/central_processing_unit.tex}
+\input{chapters/cpu_interfaces.tex}
+\input{chapters/master_thesis.tex}
+
+
+% Bibliography
+\cleardoublepage
+\printbibliography
+
+% Appendices
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Appendix}
+\input{appendices/main}
+
+\end{document}
